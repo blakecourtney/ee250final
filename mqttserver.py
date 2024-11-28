@@ -32,7 +32,6 @@ HOST=os.environ.get("MQTT_SERVER", "broker.emqx.io")
 PORT=int(os.environ.get("MQTT_PORT", 1883))
 
 tempsensor = 4
-color = blue
 print("server:"+ HOST)
 print("port:"+ str(PORT))
 
@@ -69,9 +68,9 @@ def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
 
-def get_dht(tempsensor,color):
+def get_dht(tempsensor):
     # Get the temp and hum value
-    return grovepi.dht(tempsensor,color)
+    return grovepi.dht(tempsensor,blue)
 
 
 if __name__ == '__main__':
@@ -85,7 +84,7 @@ if __name__ == '__main__':
 
     while True:
         time.sleep(1)
-        [temp,humidity] = get_dht(tempsensor,blue)
+        [temp,humidity] = get_dht(tempsensor)
         print("temp = %.02f C humidity =%.02f%%"%(temp, humidity))
         client.publish(USERNAME+"/temp", temp)
         client.publish(USERNAME+"/hum", humidity)
