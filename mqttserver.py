@@ -32,7 +32,7 @@ HOST=os.environ.get("MQTT_SERVER", "broker.emqx.io")
 PORT=int(os.environ.get("MQTT_PORT", 1883))
 
 tempsensor = 4
-
+color = blue
 print("server:"+ HOST)
 print("port:"+ str(PORT))
 
