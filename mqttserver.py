@@ -90,6 +90,6 @@ if __name__ == '__main__':
         [temp,humidity] = get_dht(tempsensor)
         print("temp = %.02f C humidity =%.02f%%"%(temp, humidity))
         line = "temp = %.02f C \n humidity =%.02f%%"%(temp, humidity)
-        setText(line)
+        setText_norefresh(line)
         client.publish(USERNAME+"/temp", temp)
         client.publish(USERNAME+"/hum", humidity)
