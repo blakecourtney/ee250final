@@ -12,6 +12,16 @@ Run vm_subscriber.py in a separate terminal on your VM."""
 import os
 import paho.mqtt.client as mqtt
 import time
+import sys
+#import RPi.GPIO as GPIO
+#import grovepi
+import time
+import math
+sys.path.append('~/Software/Python/')
+sys.path.append('~/Software/Python/grove_rgb_lcd')
+# By appending the folder of all the GrovePi libraries to the system path here,
+# we are successfully `import grovepi`
+#from grove_rgb_lcd import *
 
 
 # obtain environment variables or default
@@ -22,13 +32,16 @@ PORT=int(os.environ.get("MQTT_PORT", 1883))
 print("server:"+ HOST)
 print("port:"+ str(PORT))
 
-def handel_ultrasonic(client, userdata, msg):
-    rpi_range = msg.payload.decode("UTF-8", 'strict')
-    print("VM: ", rpi_range, "cm")
+def handle_temp(client, userdata, msg):
+    temp_state = msg.payload.decode("UTF-8", 'strict')
+    # Get the temp Ranger value
+    print("temp: ", temp_state)
 
-def handle_button(client, userdata, msg):
-    button_state = msg.payload.decode("UTF-8", 'strict')
-    print(button_state)
+
+def handle_hum(client, userdata, msg):
+    hum_state = msg.payload.decode("UTF-8", 'strict')
+    # Get the Ultrasonic Ranger value
+    print("hum: ", hum_state)
 
 def on_connect(client, userdata, flags, rc):
     #subscribe to the ultrasonic ranger topic here
@@ -36,12 +49,12 @@ def on_connect(client, userdata, flags, rc):
         print("Connected to server (i.e., broker) with result code "+str(rc))
         # add username are parameter
         # add callback functions
-        client.message_callback_add(USERNAME+"/ultrasonicRanger", handel_ultrasonic)
-        client.message_callback_add(USERNAME+"/button", handle_button)
+        client.message_callback_add(USERNAME+"/temp", handle_temp)
+        client.message_callback_add(USERNAME+"/hum", handle_hum)
 
         #subscribe to topics of interest
-        client.subscribe(USERNAME+"/button")
-        client.subscribe(USERNAME+"/ultrasonicRanger")
+        client.subscribe(USERNAME+"/temp")
+        client.subscribe(USERNAME+"/hum")
     else:
         print("Failed to connect to server, return code %d\n", str(rc))
 
