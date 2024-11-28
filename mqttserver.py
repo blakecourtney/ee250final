@@ -33,6 +33,8 @@ PORT=int(os.environ.get("MQTT_PORT", 1883))
 
 tempsensor = 4
 blue = 0
+line = ""
+
 print("server:"+ HOST)
 print("port:"+ str(PORT))
 
@@ -87,5 +89,7 @@ if __name__ == '__main__':
         time.sleep(1)
         [temp,humidity] = get_dht(tempsensor)
         print("temp = %.02f C humidity =%.02f%%"%(temp, humidity))
+        line = "temp = %.02f C \n humidity =%.02f%%"%(temp, humidity)
+        setText(line)
         client.publish(USERNAME+"/temp", temp)
         client.publish(USERNAME+"/hum", humidity)
