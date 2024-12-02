@@ -1,15 +1,3 @@
-# EE 250L Lab 05: MQTT
-
-# Haily Kuang
-# Blake Courtney
-#
-# Github repo:
-# https://github.com/usc-ee250-fall2024/mqtt-no-more-struggle
-
-"""EE 250L Lab 04 Starter Code
-
-Run rpi_pub_and_sub.py on your Raspberry Pi."""
-
 import os
 import sys
 import smbus
@@ -29,7 +17,7 @@ sys.path.append('~/Software/Python/grove_rgb_lcd')
 # obtain environment variables or default
 USERNAME = os.environ.get("MQTT_USERNAME","NoMoreStruggle")
 HOST=os.environ.get("MQTT_SERVER", "broker.emqx.io")
-PORT=int(os.environ.get("MQTT_PORT", 1883))
+PORT=int(os.environ.get("MQTT_PORT", 8883))
 
 tempsensor = 4
 blue = 0
@@ -47,25 +35,32 @@ def handle_temp(client, userdata, msg):
     temp_state = msg.payload.decode("UTF-8", 'strict')
     # Get the temp Ranger value
     print("temp: ", temp_state)
-    setText(temp_state)
+   # setText(temp_state)
 
+
+def handle_target(client, userdata, msg):
+    target_temperature = msg.payload.decode("UTF-8", 'strict')
 
 def handle_hum(client, userdata, msg):
     hum_state = msg.payload.decode("UTF-8", 'strict')
     # Get the Ultrasonic Ranger value
     print("hum: ", hum_state)
-    setText(hum_state)
+    #setText(hum_state)
 
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
-    client.subscribe(USERNAME+"/temp")  # add username are parameter
-    client.subscribe(USERNAME+"/hum")
+    client.subscribe(USERNAME+"/thermostat/indoor/currentTemperature")  # add username are parameter
+    client.subscribe(USERNAME+"/thermostat/indoor/currentHumidity")
+    client.subscribe(USERNAME+"/thermostat/indoor/targetTemperature")
+
     #subscribe to topics of interest here
     # add callback functions
-    client.message_callback_add(USERNAME+"/temp", handle_temp)
-    client.message_callback_add(USERNAME+"/hum", handle_hum)
-
+    client.message_callback_add(USERNAME+"/thermostat/indoor/currentTemperature", handle_temp)
+    client.message_callback_add(USERNAME+"/thermostat/indoor/currentHumidity", handle_hum)
+    client.message_callback_add(USERNAME+"/thermostat/indoor/targetTemperature", handle_target
+)
+    
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
@@ -91,5 +86,5 @@ if __name__ == '__main__':
         print("temp = %.02f C humidity =%.02f%%"%(temp, humidity))
         line = "temp = %.02f C \n humidity =%.02f%%"%(temp, humidity)
         setText_norefresh(line)
-        client.publish(USERNAME+"/temp", temp)
-        client.publish(USERNAME+"/hum", humidity)
+        client.publish(USERNAME+"/thermostat/indoor/currentTemperature", temp)
+        client.publish(USERNAME+"/thermostat/indoor/currentHumidity", humidity)
