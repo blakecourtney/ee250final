@@ -24,9 +24,6 @@ tempsensor = 4
 blue = 0
 line = ""
 
-#SSL/TLS CA
-ca_cert = "~/ee250final/ca.crt"
-
 print("server:"+ HOST)
 print("port:"+ str(PORT))
 
@@ -80,7 +77,7 @@ if __name__ == '__main__':
     client = mqtt.Client()
 
     #enable ssl/tls
-    client.tls_set(ca_certs=ca_cert, tls_version=ssl.PROTOCOL_TLSv1_1)
+    client.tls_set(cert_reqs=ssl.CERT_NONE, tls_version=ssl.PROTOCOL_TLSv1_2)
     client.tls_insecure_set(True)
     client.on_message = on_message
     client.on_connect = on_connect
