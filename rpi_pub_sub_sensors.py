@@ -25,7 +25,7 @@ blue = 0
 line = ""
 
 #SSL/TLS CA
-ca_cert = "/Documents/EE250/ee250final/public.key"
+ca_cert = "~/ee250final/ca.crt"
 
 print("server:"+ HOST)
 print("port:"+ str(PORT))
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     #enable ssl/tls
     client.tls_set(ca_certs=ca_cert, tls_version=ssl.PROTOCOL_TLSv1_1)
-
+    client.tls_insecure_set(True)
     client.on_message = on_message
     client.on_connect = on_connect
     init_lcd()
