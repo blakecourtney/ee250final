@@ -1,4 +1,5 @@
 import os
+import ssl
 import sys
 import smbus
 import RPi.GPIO as GPIO
@@ -16,12 +17,15 @@ sys.path.append('~/Software/Python/grove_rgb_lcd')
 
 # obtain environment variables or default
 USERNAME = os.environ.get("MQTT_USERNAME","NoMoreStruggle")
-HOST=os.environ.get("MQTT_SERVER", "broker.emqx.io")
-PORT=int(os.environ.get("MQTT_PORT", 8883))
+HOST=os.environ.get("MQTT_SERVER", "mqtt.jiahaokuang.com")
+PORT=int(os.environ.get("MQTT_PORT", 1883))
 
 tempsensor = 4
 blue = 0
 line = ""
+
+#SSL/TLS CA
+ca_cert = "/Documents/EE250/ee250final/public.key"
 
 print("server:"+ HOST)
 print("port:"+ str(PORT))
@@ -74,6 +78,10 @@ def get_dht(tempsensor):
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
     client = mqtt.Client()
+
+    #enable ssl/tls
+    client.tls_set(ca_certs=ca_cert, tls_version=ssl.PROTOCOL_TLSv1_2)
+
     client.on_message = on_message
     client.on_connect = on_connect
     init_lcd()
